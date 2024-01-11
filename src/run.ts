@@ -17,7 +17,7 @@ export function runInTerminal(text: string, filename: string, options: { watch: 
     const cdArgs = ['cd', caseFileStr];
     const cdCommand = cdArgs.join(' ');
 
-    const testArgs = ['yarn', 'run', 'vitest', options.watch ? '--watch' : '',  './' + fileName, '-t', caseNameStr];
+    const testArgs = ['yarn', 'run', 'vitest', `--watch=${options.watch? 'true' : 'false'}`,  './' + fileName, '-t', caseNameStr];
     const testCommand = testArgs.join(' ');
 
     const command = [cdCommand, testCommand].join(' && ');
