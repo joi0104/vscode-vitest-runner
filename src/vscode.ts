@@ -1,21 +1,10 @@
 import * as vscode from 'vscode';
-import { debugInTermial, runInTerminal } from './run';
+import { runInTerminal } from './run';
 
 export class RunVitestCommand implements vscode.Command {
     static ID = 'vitest.runTest';
     title = 'Run(Vitest)';
     command = RunVitestCommand.ID;
-    arguments?: [string, string];
-
-    constructor(text: string, filename: string) {
-        this.arguments = [text, filename];
-    }
-}
-
-export class DebugVitestCommand implements vscode.Command {
-    static ID = 'vitest.debugTest';
-    title = 'Debug(Vitest)';
-    command = DebugVitestCommand.ID;
     arguments?: [string, string];
 
     constructor(text: string, filename: string) {
@@ -30,9 +19,23 @@ vscode.commands.registerCommand(
     }
 );
 
+
+
+export class RunVitestWatchCommand implements vscode.Command {
+    static ID = 'vitest.runTestWatch';
+    title = 'Run:Watch(Vitest)';
+    command = RunVitestWatchCommand.ID;
+    arguments?: [string, string];
+
+    constructor(text: string, filename: string) {
+        this.arguments = [text, filename];
+    }
+}
+
 vscode.commands.registerCommand(
-    DebugVitestCommand.ID,
+    RunVitestWatchCommand.ID,
     (text: string, filename: string) => {
-        debugInTermial(text, filename);
+        runInTerminal(text, filename, { watch: true });
     }
 );
+

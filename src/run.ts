@@ -1,49 +1,27 @@
-import * as vscode from 'vscode';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
-function buildVitestArgs(text: string) {
-    return ['vitest', 'run', '-t', text];
-}
 
-function buildCdArgs(path: string) {
-    return ['cd', path];
-}
 
-export function runInTerminal(text: string, filename: string) {
-    const casePath = path.dirname(filename);
-    const terminal = vscode.window.createTerminal(`vitest - ${text}`);
+export function runInTerminal(text: string, filename: string, options: { watch: boolean } = { watch: false }) {
+    const filePath = path.dirname(filename);
+    const fileName = path.basename(filename);
 
-    const casePathStr = JSON.stringify(casePath);
+    const terminalName = `vitest - yarn runner`;
+    const testTerminal = vscode.window.terminals.find(terminal => terminal.name === terminalName);
+    const terminal = testTerminal ?? vscode.window.createTerminal(terminalName);
+
+    const caseFileStr = JSON.stringify(filePath);
     const caseNameStr = JSON.stringify(text);
 
-    const cdArgs = buildCdArgs(casePathStr);
-    terminal.sendText(cdArgs.join(' '), true);
+    const cdArgs = ['cd', caseFileStr];
+    const cdCommand = cdArgs.join(' ');
 
-    const vitestArgs = buildVitestArgs(caseNameStr);
-    const npxArgs = ['npx', ...vitestArgs];
-    terminal.sendText(npxArgs.join(' '), true);
+    const testArgs = ['yarn', 'run', 'vitest', options.watch ? '--watch' : '',  './' + fileName, '-t', caseNameStr];
+    const testCommand = testArgs.join(' ');
+
+    const command = [cdCommand, testCommand].join(' && ');
+    terminal.sendText(command, true);
+
     terminal.show();
-}
-
-function buildDebugConfig(
-    cwd: string,
-    text: string
-): vscode.DebugConfiguration {
-    return {
-        name: 'Debug vitest case',
-        request: 'launch',
-        runtimeArgs: buildVitestArgs(text),
-        cwd,
-        runtimeExecutable: 'npx',
-        skipFiles: ['<node_internals>/**'],
-        type: 'pwa-node',
-        console: 'integratedTerminal',
-        internalConsoleOptions: 'neverOpen'
-    };
-}
-
-export function debugInTermial(text: string, filename: string) {
-    const casePath = path.dirname(filename);
-    const config = buildDebugConfig(casePath, text);
-    vscode.debug.startDebugging(undefined, config);
 }
