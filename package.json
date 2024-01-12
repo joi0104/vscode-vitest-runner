@@ -1,7 +1,7 @@
 {
   "name": "vscode-vitest-runner-yarn",
   "displayName": "Vitest Runner (Yarn)",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "icon": "logo.png",
   "license": "MIT",
